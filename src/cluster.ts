@@ -22,7 +22,7 @@ import {userInfo} from 'node:os'
 import {tmpdir} from 'os'
 import pMap from 'p-map'
 import pRetry from 'p-retry'
-import {dirname, join} from 'path'
+import {dirname, join, resolve} from 'path'
 import prettyBytes from 'pretty-bytes'
 import {connect, Socket} from 'socket.io-client'
 import {Tail} from 'tail'
@@ -286,6 +286,16 @@ export class Cluster {
     const app = http2Express(express)
     app.enable('trust proxy')
 
+    let notFoundHtml: string | undefined
+    if (config.notFoundHtmlPath) {
+      const htmlPath = resolve(process.cwd(), config.notFoundHtmlPath)
+      try {
+        notFoundHtml = readFileSync(htmlPath, 'utf8')
+      } catch (err) {
+        logger.warn({err, htmlPath}, '读取 NOT_FOUND_HTML_PATH 失败，将回退到默认404响应')
+      }
+    }
+
     app.get('/auth', AuthRouteFactory(config))
 
     if (!config.disableAccessLog) {
@@ -328,6 +338,18 @@ export class Cluster {
       }
     })
     app.use('/measure', MeasureRouteFactory(config))
+    app.use((req: Request, res: Response) => {
+      const accepted = req.accepts(['html', 'text', 'json'])
+      if (accepted === 'html' && notFoundHtml) {
+        res.status(404).type('html').send(notFoundHtml)
+        return
+      }
+      if (accepted === 'json') {
+        res.status(404).json({error: 'Not Found'})
+        return
+      }
+      res.status(404).type('text').send('Not Found')
+    })
     let server: Server
     if (https) {
       server = createSecureServer(

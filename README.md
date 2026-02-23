@@ -65,6 +65,7 @@ docker compose up -d
 | ENABLE_NGINX        | 否  | false        | 使用 nginx 提供文件服务                                                                                        |
 | DISABLE_ACCESS_LOG  | 否  | false        | 禁用访问日志输出                                                                                               |
 | ENABLE_UPNP         | 否  | false        | 启用 UPNP 端口映射                                                                                           |
+| NOT_FOUND_HTML_PATH | 否  | -            | 未匹配路径（例如 /）的自定义错误页 HTML 本地路径（支持相对/绝对路径）                                                              |
 | SSL_KEY             | 否  | -            | （仅当开启BYOC时）  SSL 证书私钥。可以直接粘贴证书内容，也可以填写文件名                                                              |
 | SSL_CERT            | 否  | -            | （仅当开启BYOC时）  SSL 证书公钥。可以直接粘贴证书内容，也可以填写文件名                                                              |
 | DISABLE_ACCESS_LOG            | 否  | false            | 关闭访问日志控制台输出                                                              |
