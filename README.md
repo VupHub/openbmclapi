@@ -12,19 +12,19 @@ BMCLAPI是@bangbang93开发的BMCL的一部分，用于解决国内线路对Forg
 4. 可以长时间稳定在线
 5. 暂不支持IPv6 only(可以双栈)
 
-[Wiki](https://github.com/bangbang93/openbmclapi/wiki)
+[Wiki](https://github.com/VupHub/openbmclapi/wiki)
 
-- 如果你是家庭宽带打算参与，配置信息可以参考 [家宽搭建说明](https://github.com/bangbang93/openbmclapi/wiki/%E5%AE%B6%E5%AE%BD%E6%90%AD%E5%BB%BA%E8%AF%B4%E6%98%8E)
+- 如果你是家庭宽带打算参与，配置信息可以参考 [家宽搭建说明](https://github.com/VupHub/openbmclapi/wiki/%E5%AE%B6%E5%AE%BD%E6%90%AD%E5%BB%BA%E8%AF%B4%E6%98%8E)
 
-- 如果你是国内服务器打算参与，配置信息可以参考 [国内服务器搭建说明](https://github.com/bangbang93/openbmclapi/wiki/%E5%9B%BD%E5%86%85%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA%E8%AF%B4%E6%98%8E)
-- 如果你是Alist云盘分发打算参与，配置信息可以参考 [使用alist的WebDav模式挂载参数示例](https://github.com/bangbang93/openbmclapi/wiki/%E4%BD%BF%E7%94%A8alist%E7%9A%84WebDav%E6%A8%A1%E5%BC%8F%E6%8C%82%E8%BD%BD%E5%8F%82%E6%95%B0%E7%A4%BA%E4%BE%8B)
+- 如果你是国内服务器打算参与，配置信息可以参考 [国内服务器搭建说明](https://github.com/VupHub/openbmclapi/wiki/%E5%9B%BD%E5%86%85%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA%E8%AF%B4%E6%98%8E)
+- 如果你是Alist云盘分发打算参与，配置信息可以参考 [使用alist的WebDav模式挂载参数示例](https://github.com/VupHub/openbmclapi/wiki/%E4%BD%BF%E7%94%A8alist%E7%9A%84WebDav%E6%A8%A1%E5%BC%8F%E6%8C%82%E8%BD%BD%E5%8F%82%E6%95%B0%E7%A4%BA%E4%BE%8B)
 
 安装
 ---
 
 ### Docker Cli
 
-如果你不熟悉docker，可以参考[Docker部署指北](https://github.com/bangbang93/openbmclapi/wiki/docker%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8C%97)
+如果你不熟悉docker，可以参考[Docker部署指北](https://github.com/VupHub/openbmclapi/wiki/docker%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8C%97)
 
 ```bash
 docker run -d \
@@ -78,7 +78,7 @@ docker compose up -d
 
 ### 安装包
 
-从 [Github Release](https://github.com/bangbang93/openbmclapi/releases) 中选择对应你的系统的最新版本
+从 [Github Release](https://github.com/VupHub/openbmclapi/releases) 中选择对应你的系统的最新版本
 
 ### 从源码安装
 
@@ -93,7 +93,7 @@ docker compose up -d
 2. Clone 并安装依赖
 
 ```bash
-git clone https://github.com/bangbang93/openbmclapi
+git clone https://github.com/VupHub/openbmclapi
 cd openbmclapi
 ## 安装依赖
 npm ci
