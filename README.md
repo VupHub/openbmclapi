@@ -66,6 +66,8 @@ docker compose up -d
 | DISABLE_ACCESS_LOG  | 否  | false        | 禁用访问日志输出                                                                                               |
 | ENABLE_UPNP         | 否  | false        | 启用 UPNP 端口映射                                                                                           |
 | NOT_FOUND_HTML_PATH | 否  | -            | 未匹配路径（例如 /）的自定义错误页 HTML 本地路径（支持相对/绝对路径）                                                              |
+| RSYNC_MAX_BANDWIDTH_MBPS | 否  | 200          | rsync 预同步最大总带宽（Mbps），多线程时会按线程数均分                                                              |
+| RSYNC_MAX_THREADS        | 否  | 8            | rsync 预同步最大线程数（并发 rsync 进程数）                                                                  |
 | SSL_KEY             | 否  | -            | （仅当开启BYOC时）  SSL 证书私钥。可以直接粘贴证书内容，也可以填写文件名                                                              |
 | SSL_CERT            | 否  | -            | （仅当开启BYOC时）  SSL 证书公钥。可以直接粘贴证书内容，也可以填写文件名                                                              |
 | DISABLE_ACCESS_LOG            | 否  | false            | 关闭访问日志控制台输出                                                              |
@@ -103,6 +105,19 @@ node dist/index.js
 
 3. 如果你看到了 `CLUSTER_ID is not set` 的报错, 说明一切正常, 该设置参数了
 
+### 打包构建
+
+```bash
+npm ci
+npm run build
+```
+
+构建产物在 `dist/`，可直接运行：
+
+```bash
+node dist/index.js
+```
+
 ### 设置参数
 
 在项目根目录创建一个文件, 名为 `.env`
@@ -126,3 +141,25 @@ openbmclapi 会自行同步需要的文件, 但是初次同步可能会速度过
 - `rsync -rzvP openbmclapi@home.933.moe::openbmclapi cache`
 - `rsync -avP openbmclapi@storage.yserver.ink::bmcl cache`
 - `rsync -azvrhP openbmclapi@openbmclapi.home.mxd.moe::data cache`
+
+也可以使用内置的多线程 rsync 预同步（会把文件同步到 `./cache`），并通过 `.env` 限制最大带宽与线程数：
+
+```env
+RSYNC_MAX_BANDWIDTH_MBPS=200
+RSYNC_MAX_THREADS=8
+```
+
+先构建：
+
+```bash
+npm ci
+npm run build
+```
+
+再执行预同步（选择任意一个 rsync 源）：
+
+```bash
+node dist/index.js rsync openbmclapi@home.933.moe::openbmclapi
+node dist/index.js rsync openbmclapi@storage.yserver.ink::bmcl
+node dist/index.js rsync openbmclapi@openbmclapi.home.mxd.moe::data
+```
