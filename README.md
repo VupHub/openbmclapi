@@ -54,27 +54,71 @@ docker compose up -d
 
 ## 配置
 
-| 环境变量                | 必填 | 默认值          | 说明                                                                                                     |
-|---------------------|----|--------------|--------------------------------------------------------------------------------------------------------|
-| CLUSTER_ID          | 是  | -            | 集群 ID                                                                                                  |
-| CLUSTER_SECRET      | 是  | -            | 集群密钥                                                                                                   |
-| CLUSTER_IP          | 否  | 自动获取公网出口IP   | 用户访问时使用的 IP 或域名                                                                                        |
-| CLUSTER_PORT        | 否  | 4000         | 监听端口                                                                                                   |
-| CLUSTER_PUBLIC_PORT | 否  | CLUSTER_PORT | 对外端口                                                                                                   |
-| CLUSTER_BYOC        | 否  | false        | 是否使用自定义域名, (BYOC=Bring you own certificate),当使用国内服务器需要备案时, 需要启用这个参数来使用你自己的域名, 并且你需要自己提供ssl termination |
-| ENABLE_NGINX        | 否  | false        | 使用 nginx 提供文件服务                                                                                        |
-| DISABLE_ACCESS_LOG  | 否  | false        | 禁用访问日志输出                                                                                               |
-| ENABLE_UPNP         | 否  | false        | 启用 UPNP 端口映射                                                                                           |
-| NOT_FOUND_HTML_PATH | 否  | -            | 未匹配路径（例如 /）的自定义错误页 HTML 本地路径（支持相对/绝对路径）                                                              |
-| RSYNC_MAX_BANDWIDTH_MBPS | 否  | 200          | rsync 预同步最大总带宽（Mbps），多线程时会按线程数均分                                                              |
-| RSYNC_MAX_THREADS        | 否  | 8            | rsync 预同步最大线程数（并发 rsync 进程数）                                                                  |
-| SSL_KEY             | 否  | -            | （仅当开启BYOC时）  SSL 证书私钥。可以直接粘贴证书内容，也可以填写文件名                                                              |
-| SSL_CERT            | 否  | -            | （仅当开启BYOC时）  SSL 证书公钥。可以直接粘贴证书内容，也可以填写文件名                                                              |
-| DISABLE_ACCESS_LOG            | 否  | false            | 关闭访问日志控制台输出                                                              |
-| NODE_ENV            | 否  | -            | 开发调试环境（development）                                                              |
-| CLUSTER_BMCLAPI            | 否  | https://openbmclapi.bangbang93.com            | 主控地址                                                              |
+`.env` 文件位于项目根目录，程序启动时会自动加载（Docker Compose 也会读取）。
 
-如果你在源码中发现了其他环境变量, 那么它们是为了方便开发而存在的, 可能会随时修改, 不要在生产环境中使用
+### 运行时环境变量（程序会读取）
+
+| 环境变量 | 必填 | 默认值 | 配置方法 |
+|---|---:|---|---|
+| CLUSTER_ID | 是 | - | 集群 ID（字符串） |
+| CLUSTER_SECRET | 是 | - | 集群密钥（字符串） |
+| CLUSTER_BMCLAPI | 否 | https://openbmclapi.bangbang93.com | 主控地址（URL） |
+| CLUSTER_IP | 否 | 自动获取公网出口IP | 对外访问的 IP 或域名（字符串） |
+| CLUSTER_PORT | 否 | 4000 | 本地监听端口（整数） |
+| CLUSTER_PUBLIC_PORT | 否 | CLUSTER_PORT | 对外端口（整数，端口映射后需要设置） |
+| CLUSTER_BYOC | 否 | false | 是否启用 BYOC（true/false）。开启后可用自定义证书 |
+| SSL_CERT | 否 | - | 证书公钥：可填证书文件路径，或直接填证书内容（PEM）。仅 BYOC 时使用 |
+| SSL_KEY | 否 | - | 证书私钥：可填私钥文件路径，或直接填私钥内容（PEM）。仅 BYOC 时使用 |
+| ENABLE_NGINX | 否 | false | 是否启用内置 nginx（true/false） |
+| DISABLE_ACCESS_LOG | 否 | false | 是否禁用访问日志输出（true/false） |
+| ENABLE_UPNP | 否 | false | 是否启用 UPNP 端口映射（true/false） |
+| CLUSTER_STORAGE | 否 | file | 存储类型：file / alist / minio / oss |
+| CLUSTER_STORAGE_OPTIONS | 否 | - | 存储参数（JSON 对象字符串）。不同存储类型参数不同，见下方示例 |
+| NOT_FOUND_HTML_PATH | 否 | - | 未匹配路径（例如 /）的自定义错误页 HTML 本地路径（支持相对/绝对路径） |
+| RSYNC_MAX_BANDWIDTH_MBPS | 否 | 200 | rsync 预同步最大总带宽（Mbps），多线程时会按线程数均分 |
+| RSYNC_MAX_THREADS | 否 | 8 | rsync 预同步最大线程数（并发 rsync 进程数） |
+| LOGLEVEL | 否 | info | 日志级别：trace / debug / info / warn / error / fatal |
+| PLAIN_LOG | 否 | - | 设置为任意非空值时，关闭 pretty 输出（更适合日志收集） |
+| NODE_ENV | 否 | - | 开发调试环境：development 时异常不会自动退出进程 |
+| NO_DAEMON | 否 | - | 设置为任意非空值时，关闭守护进程模式（不再 fork 子进程） |
+| NO_FAST_ENABLE | 否 | false | 设置为 true 时，上报主控时禁用 fast enable（用于排查） |
+
+### CLUSTER_STORAGE_OPTIONS 示例
+
+`.env` 中需要写成 JSON 对象字符串，例如：
+
+```env
+CLUSTER_STORAGE=file
+```
+
+#### alist（WebDAV）
+
+```env
+CLUSTER_STORAGE=alist
+CLUSTER_STORAGE_OPTIONS={"url":"https://example.com/dav","username":"user","password":"pass","basePath":"/openbmclapi","cacheTtl":"1h"}
+```
+
+#### minio
+
+```env
+CLUSTER_STORAGE=minio
+CLUSTER_STORAGE_OPTIONS={"url":"http://127.0.0.1:9000","internalUrl":"http://127.0.0.1:9000"}
+```
+
+#### oss（Aliyun OSS）
+
+```env
+CLUSTER_STORAGE=oss
+CLUSTER_STORAGE_OPTIONS={"accessKeyId":"***","accessKeySecret":"***","bucket":"your-bucket","internal":false,"prefix":"","proxy":true,"endpoint":"oss-cn-hangzhou.aliyuncs.com","region":"oss-cn-hangzhou"}
+```
+
+### Docker Compose 专用（可选）
+
+| 环境变量 | 必填 | 默认值 | 配置方法 |
+|---|---:|---|---|
+| UID | 否 | 1000 | 仅 `docker-compose.dev.yml`：容器内运行用户 UID |
+| GID | 否 | 1000 | 仅 `docker-compose.dev.yml`：容器内运行用户 GID |
+| TZ | 否 | Asia/Shanghai | 时区（Docker 环境变量） |
 
 ### 安装包
 
