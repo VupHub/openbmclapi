@@ -296,6 +296,18 @@ export class Cluster {
       }
     }
 
+    if (config.testFilesDir) {
+      const testFilesDir = resolve(process.cwd(), config.testFilesDir)
+      logger.info({testFilesDir}, '启用测试文件目录: /test/test')
+      app.use(
+        '/test/test',
+        express.static(testFilesDir, {
+          fallthrough: false,
+          index: false,
+        }),
+      )
+    }
+
     app.get('/auth', AuthRouteFactory(config))
 
     if (!config.disableAccessLog) {

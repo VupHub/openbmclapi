@@ -75,6 +75,7 @@ docker compose up -d
 | CLUSTER_STORAGE | 否 | file | 存储类型：file / alist / minio / oss |
 | CLUSTER_STORAGE_OPTIONS | 否 | - | 存储参数（JSON 对象字符串）。不同存储类型参数不同，见下方示例 |
 | NOT_FOUND_HTML_PATH | 否 | - | 未匹配路径（例如 /）的自定义错误页 HTML 本地路径（支持相对/绝对路径） |
+| TEST_FILES_DIR | 否 | - | 测试文件目录路径（相对/绝对）。启用后可通过 /test/test/<文件名> 访问 |
 | RSYNC_MAX_BANDWIDTH_MBPS | 否 | 200 | rsync 预同步最大总带宽（Mbps），多线程时会按线程数均分 |
 | RSYNC_MAX_THREADS | 否 | 8 | rsync 预同步最大线程数（并发 rsync 进程数） |
 | LOGLEVEL | 否 | info | 日志级别：trace / debug / info / warn / error / fatal |
@@ -111,6 +112,18 @@ CLUSTER_STORAGE_OPTIONS={"url":"http://127.0.0.1:9000","internalUrl":"http://127
 CLUSTER_STORAGE=oss
 CLUSTER_STORAGE_OPTIONS={"accessKeyId":"***","accessKeySecret":"***","bucket":"your-bucket","internal":false,"prefix":"","proxy":true,"endpoint":"oss-cn-hangzhou.aliyuncs.com","region":"oss-cn-hangzhou"}
 ```
+
+### 连通性测试文件（可选）
+
+不配置 `TEST_FILES_DIR` 时，不会启用该测试路径。
+
+```env
+TEST_FILES_DIR=./test-files
+```
+
+例如把文件 `1.test` 放到 `./test-files/1.test`，访问路径为：
+
+- `http(s)://<你的地址>/test/test/1.test`
 
 ### Docker Compose 专用（可选）
 
@@ -182,6 +195,7 @@ CLUSTER_ID 和 CLUSTER_SECRET 请联系我获取
 
 openbmclapi 会自行同步需要的文件, 但是初次同步可能会速度过慢, 如果您的节点是个全量节点, 可以通过以下命令使用rsync快速同步
 以下三台rsync服务器是相同的, 你可以选择任意一台进行同步
+其中rsync的password为 ```openbmclapi```
 - `rsync -rzvP openbmclapi@home.933.moe::openbmclapi cache`
 - `rsync -avP openbmclapi@storage.yserver.ink::bmcl cache`
 - `rsync -azvrhP openbmclapi@openbmclapi.home.mxd.moe::data cache`
@@ -201,6 +215,7 @@ npm run build
 ```
 
 再执行预同步（选择任意一个 rsync 源）：
+其中rsync的password为 ```openbmclapi```
 
 ```bash
 node dist/index.js rsync openbmclapi@home.933.moe::openbmclapi

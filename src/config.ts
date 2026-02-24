@@ -18,6 +18,7 @@ export class Config {
   public readonly byoc = env.get('CLUSTER_BYOC').asBool()
   public readonly disableAccessLog = env.get('DISABLE_ACCESS_LOG').asBool()
   public readonly notFoundHtmlPath? = env.get('NOT_FOUND_HTML_PATH').asString()
+  public readonly testFilesDir? = env.get('TEST_FILES_DIR').asString()
 
   public readonly enableNginx = env.get('ENABLE_NGINX').asBool()
   public readonly enableUpnp = env.get('ENABLE_UPNP').asBool()
