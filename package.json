@@ -1,6 +1,6 @@
 {
-  "name": "openbmclapi",
-  "version": "1.14.0-vuphub.1",
+  "name": "openbmclapibyVupHub",
+  "version": "1.14.0",
   "description": "bmclapi@home",
   "bin": "dist/openbmclapi.js",
   "private": true,
